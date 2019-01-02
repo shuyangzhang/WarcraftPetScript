@@ -4,8 +4,10 @@ import win32gui
 from ctypes import *
 import time
 from pynput.keyboard import Key, Listener
+import winsound
 
 SWITCH = True
+# STATUS_CHANGED = False
 
 class POINT(Structure):
     _fields_ = [("x", c_ulong),("y", c_ulong)]
@@ -21,7 +23,13 @@ def mouse_middle_click(x,y):
 
 def loop_toggle(key):
     global SWITCH
+    # global STATUS_CHANGED
     if key == Key.f8:
+        if SWITCH:
+            winsound.Beep(600, 300)
+        else:
+            winsound.Beep(2000, 300)
+        # STATUS_CHANGED = True
         SWITCH = not SWITCH
 
 if __name__ == "__main__":
@@ -62,6 +70,12 @@ if __name__ == "__main__":
 
         while True:
             if win32gui.GetWindowText(win32gui.GetForegroundWindow()) == game_window_name:
+                # if STATUS_CHANGED:
+                #     STATUS_CHANGED = not STATUS_CHANGED   # listener does not run on deamon thread, so Beep is not work
+                #     if SWITCH:
+                #         winsound.Beep(2000, 300)
+                #     else:
+                #         winsound.Beep(600, 300)
                 if SWITCH:
                     x, y = get_mouse_point()
                     mouse_middle_click(x, y)
